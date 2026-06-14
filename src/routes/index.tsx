@@ -4,12 +4,10 @@ import {
   Upload,
   ImageIcon,
   X,
-  Sparkles,
   ShieldCheck,
   AlertTriangle,
   CheckCircle2,
   XCircle,
-  Info,
   FileText,
   Loader2,
 } from "lucide-react";
@@ -137,29 +135,20 @@ function HomePage() {
 
   return (
     <main className="bg-app min-h-dvh w-full" style={bgStyle}>
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 pb-24 pt-[max(env(safe-area-inset-top),1.25rem)]">
-        <header className="animate-in-up flex items-center justify-between pt-2">
-          <div className="flex items-center gap-3">
-            <div className="glass-chip flex h-10 w-10 items-center justify-center">
-              <ShieldCheck className="h-5 w-5 text-foreground" />
-            </div>
-            <div>
-              <h1 className="text-[22px] font-semibold leading-tight tracking-tight">
-                Verificador de Comprobantes
-              </h1>
-              <p className="text-[13px] text-muted-foreground">
-                Análisis OCR con IA · Liquid Glass
-              </p>
-            </div>
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pb-24 pt-[max(env(safe-area-inset-top),1rem)]">
+        <header className="animate-in-up flex items-center gap-3 pt-1">
+          <div className="glass-chip flex h-9 w-9 items-center justify-center">
+            <ShieldCheck className="h-4 w-4 text-foreground" />
+          </div>
+          <div>
+            <h1 className="text-[17px] font-semibold leading-tight tracking-tight">
+              Verificador de Comprobantes
+            </h1>
+            <p className="text-[12px] text-muted-foreground">Análisis OCR con IA</p>
           </div>
         </header>
 
-        <section className="glass animate-in-up p-5">
-          <div className="mb-4 flex items-center gap-2">
-            <ImageIcon className="h-4 w-4 text-accent" />
-            <h2 className="text-[17px] font-semibold tracking-tight">Subir Comprobante</h2>
-          </div>
-
+        <section className="glass animate-in-up p-3">
           {!preview ? (
             <label
               onDragOver={(e) => {
@@ -168,7 +157,7 @@ function HomePage() {
               }}
               onDragLeave={() => setIsDragging(false)}
               onDrop={onDrop}
-              className={`group relative flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed transition-all ${
+              className={`group relative flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-dashed px-4 py-3 transition-all ${
                 isDragging
                   ? "border-accent bg-white/10"
                   : "border-white/20 bg-white/5 hover:bg-white/10"
@@ -184,28 +173,31 @@ function HomePage() {
                   if (f) void handleFile(f);
                 }}
               />
-              <div className="glass-chip flex h-14 w-14 items-center justify-center">
-                <Upload className="h-6 w-6" />
+              <div className="glass-chip flex h-10 w-10 shrink-0 items-center justify-center">
+                <Upload className="h-4 w-4" />
               </div>
-              <div className="text-center">
-                <p className="text-[15px] font-medium">Arrastra o toca para subir</p>
-                <p className="mt-1 text-[13px] text-muted-foreground">
-                  JPG, PNG o WEBP · compresión automática
-                </p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-medium leading-tight">Subir comprobante</p>
+                <p className="text-[12px] text-muted-foreground">JPG, PNG o WEBP</p>
               </div>
+              <ImageIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
             </label>
           ) : (
-            <div className="relative overflow-hidden rounded-3xl border border-white/15">
+            <div className="relative flex items-center gap-3 rounded-2xl border border-white/15 bg-white/5 p-2">
               <img
                 src={preview}
-                alt="Vista previa del comprobante"
-                className="block w-full"
+                alt="Vista previa"
+                className="h-16 w-16 shrink-0 rounded-xl object-cover"
                 loading="lazy"
               />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13px] font-medium">Comprobante listo</p>
+                <p className="text-[11px] text-muted-foreground">Toca la X para cambiar</p>
+              </div>
               <button
                 onClick={clearImage}
                 aria-label="Quitar imagen"
-                className="glass-chip absolute right-3 top-3 flex h-9 w-9 items-center justify-center text-foreground transition active:scale-95"
+                className="glass-chip flex h-8 w-8 shrink-0 items-center justify-center text-foreground transition active:scale-95"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -213,40 +205,37 @@ function HomePage() {
           )}
         </section>
 
-        <section className="glass animate-in-up p-5">
-          <div className="mb-3 flex items-center gap-2">
+        <section className="glass animate-in-up p-4">
+          <div className="mb-2 flex items-center gap-2">
             <FileText className="h-4 w-4 text-accent" />
-            <h2 className="text-[17px] font-semibold tracking-tight">Texto de Comparación</h2>
+            <h2 className="text-[15px] font-semibold tracking-tight">Texto de comparación</h2>
           </div>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder={`Pega aquí los datos del pago para comparar con la imagen...\n\nEjemplo:\nRecarga $3.00\nMercado Pago · Argentina\nReferencia 164105224872`}
-            rows={7}
-            className="glass-input w-full resize-y p-4 leading-relaxed"
+            placeholder="Pega aquí los datos del pago..."
+            rows={5}
+            className="glass-input w-full resize-y p-3 leading-relaxed"
             style={{ fontSize: "16px" }}
           />
 
           <button
             onClick={onAnalyze}
             disabled={loading || !payload}
-            className="btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2"
+            className="btn-primary mt-3 flex h-11 w-full items-center justify-center gap-2"
           >
             {loading ? (
               <>
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Analizando...
               </>
             ) : (
-              <>
-                <Sparkles className="h-5 w-5" />
-                Analizar Comprobante
-              </>
+              <span>Analizar comprobante</span>
             )}
           </button>
 
           {error && (
-            <div className="mt-3 flex items-start gap-2 rounded-2xl border border-destructive/40 bg-destructive/15 p-3 text-[14px]">
+            <div className="mt-3 flex items-start gap-2 rounded-2xl border border-destructive/40 bg-destructive/15 p-3 text-[13px]">
               <AlertTriangle className="mt-[2px] h-4 w-4 shrink-0 text-destructive-foreground" />
               <span>{error}</span>
             </div>
@@ -254,23 +243,20 @@ function HomePage() {
         </section>
 
         {loading && (
-          <section className="glass animate-in-up overflow-hidden p-5">
-            <div className="shimmer h-6 w-1/2 rounded-md" />
-            <div className="mt-4 space-y-3">
+          <section className="glass animate-in-up overflow-hidden p-4">
+            <div className="shimmer h-5 w-1/3 rounded-md" />
+            <div className="mt-3 space-y-2">
               <div className="shimmer h-4 w-full rounded-md" />
               <div className="shimmer h-4 w-5/6 rounded-md" />
-              <div className="shimmer h-4 w-2/3 rounded-md" />
             </div>
           </section>
         )}
 
         {result && <ResultCard result={result} />}
 
-        <p className="glass animate-in-up px-5 py-4 text-[12px] leading-relaxed text-muted-foreground">
-          Este análisis es una evaluación basada en información visual y textual. No garantiza la
-          autenticidad de ningún comprobante ni confirma que un pago haya sido realizado. La
-          verificación definitiva debe realizarse directamente con la entidad financiera
-          correspondiente.
+        <p className="glass animate-in-up px-4 py-3 text-[11px] leading-relaxed text-muted-foreground">
+          Evaluación informativa. No garantiza la autenticidad del comprobante. Verifica siempre con
+          la entidad financiera.
         </p>
       </div>
     </main>
@@ -286,136 +272,93 @@ function StatusBadge({ estado, nivel }: { estado: AnalysisResult["estado"]; nive
   const { Icon } = map[estado];
   return (
     <div
-      className="flex items-center gap-2 rounded-full border border-white/25 px-3 py-1.5 text-[13px] font-semibold text-[oklch(0.12_0.04_305)]"
+      className="flex items-center gap-1.5 rounded-full border border-white/25 px-2.5 py-1 text-[12px] font-semibold text-[oklch(0.12_0.04_305)]"
       style={{ background: map[estado].bg }}
     >
-      <Icon className="h-4 w-4" />
+      <Icon className="h-3.5 w-3.5" />
       <span>{estado}</span>
       <span className="opacity-80">· {nivel}%</span>
     </div>
   );
 }
 
-function Row({ label, value }: { label: string; value?: string | string[] }) {
-  const v = Array.isArray(value) ? value.filter(Boolean).join(", ") : value;
-  if (!v) return null;
+function MiniRow({ label, value }: { label: string; value?: string }) {
+  if (!value) return null;
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-white/10 py-2.5 last:border-b-0">
-      <span className="text-[13px] text-muted-foreground">{label}</span>
-      <span className="max-w-[60%] text-right text-[14px] font-medium">{v}</span>
+    <div className="flex items-center justify-between gap-3 py-1">
+      <span className="text-[12px] text-muted-foreground">{label}</span>
+      <span className="max-w-[65%] truncate text-right text-[13px] font-medium">{value}</span>
     </div>
   );
 }
 
-function BulletList({ items, tone }: { items: string[]; tone: "ok" | "warn" | "info" }) {
-  if (!items?.length) {
-    return <p className="text-[13px] text-muted-foreground">Sin elementos.</p>;
-  }
-  const Icon = tone === "ok" ? CheckCircle2 : tone === "warn" ? AlertTriangle : Info;
-  const color =
-    tone === "ok"
-      ? "text-[oklch(0.85_0.16_150)]"
-      : tone === "warn"
-        ? "text-[oklch(0.88_0.16_80)]"
-        : "text-accent";
-  return (
-    <ul className="space-y-2">
-      {items.map((it, i) => (
-        <li key={i} className="flex items-start gap-2 text-[14px]">
-          <Icon className={`mt-[3px] h-4 w-4 shrink-0 ${color}`} />
-          <span className="leading-snug">{it}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function ResultCard({ result }: { result: AnalysisResult }) {
+  const hasOcr =
+    result.ocr.plataforma || result.ocr.monto || result.ocr.referencia || result.ocr.fecha;
   return (
-    <section className="glass-strong animate-in-up space-y-5 p-5">
+    <section className="glass-strong animate-in-up space-y-3 p-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-[18px] font-semibold tracking-tight">Resultado</h2>
+        <h2 className="text-[16px] font-semibold tracking-tight">Resultado</h2>
         <StatusBadge estado={result.estado} nivel={result.nivelCoincidencia} />
       </div>
 
-      <div>
-        <div className="mb-1.5 flex items-center justify-between text-[12px] text-muted-foreground">
-          <span>Nivel de coincidencia</span>
-          <span>{result.nivelCoincidencia}%</span>
-        </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
-          <div
-            className="h-full rounded-full transition-all duration-700"
-            style={{
-              width: `${result.nivelCoincidencia}%`,
-              background:
-                result.estado === "Coincide"
-                  ? "var(--gradient-success)"
-                  : result.estado === "Parcialmente Coincide"
-                    ? "var(--gradient-warning)"
-                    : "var(--gradient-danger)",
-            }}
-          />
-        </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{
+            width: `${result.nivelCoincidencia}%`,
+            background:
+              result.estado === "Coincide"
+                ? "var(--gradient-success)"
+                : result.estado === "Parcialmente Coincide"
+                  ? "var(--gradient-warning)"
+                  : "var(--gradient-danger)",
+          }}
+        />
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <h3 className="mb-2 text-[15px] font-semibold">Análisis OCR</h3>
+      <p className="text-[13px] leading-snug text-foreground/90">{result.hipotesis}</p>
+
+      {hasOcr && (
+        <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5">
+          <MiniRow label="Plataforma" value={result.ocr.plataforma} />
+          <MiniRow label="Monto" value={result.ocr.monto} />
+          <MiniRow label="Referencia" value={result.ocr.referencia} />
+          <MiniRow label="Fecha" value={result.ocr.fecha} />
+        </div>
+      )}
+
+      {(result.coincidencias?.length ?? 0) > 0 && (
         <div>
-          <Row label="Plataforma" value={result.ocr.plataforma} />
-          <Row label="Banco" value={result.ocr.banco} />
-          <Row label="Monto" value={result.ocr.monto} />
-          <Row label="Fecha" value={result.ocr.fecha} />
-          <Row label="Hora" value={result.ocr.hora} />
-          <Row label="Remitente" value={result.ocr.remitente} />
-          <Row label="Destinatario" value={result.ocr.destinatario} />
-          <Row label="Referencia" value={result.ocr.referencia} />
-          <Row label="N° Operación" value={result.ocr.numeroOperacion} />
-          <Row label="Identificadores" value={result.ocr.identificadores} />
+          <h3 className="mb-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Coincide
+          </h3>
+          <ul className="space-y-1">
+            {result.coincidencias.map((it, i) => (
+              <li key={i} className="flex items-start gap-2 text-[13px]">
+                <CheckCircle2 className="mt-[2px] h-3.5 w-3.5 shrink-0 text-[oklch(0.85_0.16_150)]" />
+                <span className="leading-snug">{it}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-        {result.ocr.textoCompleto && (
-          <details className="mt-3">
-            <summary className="cursor-pointer text-[13px] text-muted-foreground">
-              Ver texto completo detectado
-            </summary>
-            <pre className="mt-2 max-h-60 overflow-auto whitespace-pre-wrap rounded-xl bg-black/30 p-3 text-[12px]">
-              {result.ocr.textoCompleto}
-            </pre>
-          </details>
-        )}
-      </div>
+      )}
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <h3 className="mb-2 text-[15px] font-semibold">Datos Detectados (texto)</h3>
-        <Row label="Monto" value={result.textoUsuario.monto} />
-        <Row label="Plataforma" value={result.textoUsuario.plataforma} />
-        <Row label="Referencia" value={result.textoUsuario.referencia} />
-        <Row label="Nombre" value={result.textoUsuario.nombre} />
-        <Row label="OCR" value={result.textoUsuario.ocr} />
-        <Row label="Datos importantes" value={result.textoUsuario.datosImportantes} />
-      </div>
-
-      <div className="grid gap-3">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <h3 className="mb-2 text-[15px] font-semibold">Coincidencias</h3>
-          <BulletList items={result.coincidencias ?? []} tone="ok" />
+      {(result.diferencias?.length ?? 0) > 0 && (
+        <div>
+          <h3 className="mb-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Difiere
+          </h3>
+          <ul className="space-y-1">
+            {result.diferencias.map((it, i) => (
+              <li key={i} className="flex items-start gap-2 text-[13px]">
+                <AlertTriangle className="mt-[2px] h-3.5 w-3.5 shrink-0 text-[oklch(0.88_0.16_80)]" />
+                <span className="leading-snug">{it}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <h3 className="mb-2 text-[15px] font-semibold">Diferencias</h3>
-          <BulletList items={result.diferencias ?? []} tone="warn" />
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <h3 className="mb-2 text-[15px] font-semibold">Observaciones</h3>
-          <BulletList items={result.observaciones ?? []} tone="info" />
-        </div>
-      </div>
-
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <h3 className="mb-2 text-[15px] font-semibold">Hipótesis de la IA</h3>
-        <p className="text-[14px] leading-relaxed text-foreground/90">
-          {result.hipotesis || "Sin hipótesis."}
-        </p>
-      </div>
+      )}
     </section>
   );
 }
