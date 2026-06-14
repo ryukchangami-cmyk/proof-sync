@@ -95,6 +95,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Verificador de Comprobantes" },
+      { name: "description", content: "Verificar comprobante con inteligencia artificial Ultra mega rápido y seguro y sencillo listo para revendedores" },
+      { property: "og:description", content: "Verificar comprobante con inteligencia artificial Ultra mega rápido y seguro y sencillo listo para revendedores" },
+      { name: "twitter:description", content: "Verificar comprobante con inteligencia artificial Ultra mega rápido y seguro y sencillo listo para revendedores" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/4p2h2QinGERT7IPO86oFoo5FWQF3/social-images/social-1781461252886-3fb20cab-a907-4e2f-b49b-b51308c74e08.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/4p2h2QinGERT7IPO86oFoo5FWQF3/social-images/social-1781461252886-3fb20cab-a907-4e2f-b49b-b51308c74e08.webp" },
     ],
     links: [
       {
