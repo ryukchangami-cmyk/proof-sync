@@ -2,28 +2,58 @@ import fs from 'fs';
 import path from 'path';
 
 /**
- * Post-build script that generates an index.html for static hosting
- * compatible with Vercel and other static hosting platforms.
+ * Post-build script: genera index.html para hosting estático (Vercel, etc.)
+ * Con logs detallados y manejo de errores para diagnóstico rápido en CI.
  */
 
-const distClientPath = path.resolve('dist/client');
-const assetsPath = path.join(distClientPath, 'assets');
+const SCRIPT = 'post-build.js';
+const log = (msg) => console.log(`[${SCRIPT}] ${msg}`);
+const warn = (msg) => console.warn(`[${SCRIPT}] WARN: ${msg}`);
+const fail = (msg, err) => {
+  console.error(`[${SCRIPT}] ERROR: ${msg}`);
+  if (err) {
+    console.error(`[${SCRIPT}] Causa: ${err.message}`);
+    if (err.stack) console.error(err.stack);
+  }
+  process.exit(1);
+};
 
-function findFile(prefix, ext) {
-  if (!fs.existsSync(assetsPath)) return null;
+try {
+  const distClientPath = path.resolve('dist/client');
+  const assetsPath = path.join(distClientPath, 'assets');
+
+  log(`Inicio. CWD=${process.cwd()}`);
+  log(`distClientPath=${distClientPath}`);
+
+  if (!fs.existsSync(distClientPath)) {
+    fail(`No existe el directorio de salida "${distClientPath}". ¿Falló "vite build"?`);
+  }
+  if (!fs.existsSync(assetsPath)) {
+    fail(`No existe "${assetsPath}". El build no generó assets.`);
+  }
+
   const files = fs.readdirSync(assetsPath);
-  return files.find(f => f.startsWith(prefix) && f.endsWith(ext)) || null;
-}
+  log(`Assets encontrados (${files.length}): ${files.join(', ')}`);
 
-const jsFile = findFile('index', '.js');
-const cssFile = findFile('styles', '.css');
+  const jsFile = files.find((f) => f.startsWith('index') && f.endsWith('.js'));
+  const cssFile = files.find((f) => f.startsWith('styles') && f.endsWith('.css'));
 
-if (!jsFile || !cssFile) {
-  console.warn('⚠️  Could not find built assets. Make sure the build completed successfully.');
-  process.exit(0);
-}
+  if (!jsFile) {
+    fail(
+      `No se encontró el bundle JS (prefijo "index", extensión ".js") en ${assetsPath}. ` +
+        `Revisa la salida de "vite build" — probablemente el entry no se generó.`
+    );
+  }
+  if (!cssFile) {
+    warn(`No se encontró CSS (prefijo "styles"). Continuando sin <link rel="stylesheet">.`);
+  }
 
-const html = `<!DOCTYPE html>
+  log(`Entry JS: ${jsFile}`);
+  if (cssFile) log(`Entry CSS: ${cssFile}`);
+
+  const cssLink = cssFile ? `<link rel="stylesheet" href="/assets/${cssFile}">` : '';
+
+  const html = `<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -31,7 +61,7 @@ const html = `<!DOCTYPE html>
   <title>Verificador de Comprobantes</title>
   <meta name="description" content="Verifica comprobantes de pago de forma rápida y segura con análisis de IA.">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/assets/${cssFile}">
+  ${cssLink}
   <style>
     html, body { margin: 0; padding: 0; background: #000; }
   </style>
@@ -42,5 +72,14 @@ const html = `<!DOCTYPE html>
 </body>
 </html>`;
 
-fs.writeFileSync(path.join(distClientPath, 'index.html'), html);
-console.log('✅  Generated index.html for static hosting');
+  const outFile = path.join(distClientPath, 'index.html');
+  try {
+    fs.writeFileSync(outFile, html);
+  } catch (err) {
+    fail(`No se pudo escribir "${outFile}".`, err);
+  }
+
+  log(`OK — generado ${outFile} (${html.length} bytes)`);
+} catch (err) {
+  fail('Fallo inesperado durante post-build', err);
+}
