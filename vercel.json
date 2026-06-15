@@ -1,22 +1,24 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "bun run build",
-  "installCommand": "bun install",
-  "outputDirectory": "dist/client",
-  "framework": null,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
+      "src": "dist/server/index.mjs",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
-      "source": "/favicon.ico",
-      "destination": "/favicon.ico"
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "dist/server/index.mjs"
     }
   ],
   "headers": [
